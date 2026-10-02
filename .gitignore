@@ -1,0 +1,52 @@
+# ---- Java / Maven ----
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+# Third-party jars are not committed. tools/embedded-redis-*.jar is the source of
+# tools/redis-server.exe; the README records where it comes from so it can be
+# re-fetched instead of being carried in the repository.
+*.jar
+*.war
+*.log
+
+# Local Maven repository used when the default one is not writable
+.m2repo/
+.maven-repo/
+
+# ---- Node / Vue ----
+node_modules/
+.npm-cache/
+dist/
+dist-ssr/
+*.local
+.vite/
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml.bak
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+!.vscode/extensions.json
+*.swp
+
+# ---- OS ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- Project runtime data ----
+logs/
+data/
+*.pid
+# Redis dump/log files produced by tools/start-redis.ps1
+tools/redis-data/
+
+# ---- Personal notes ----
+# The interview-prep notes and the internal execution plan describe how to *present*
+# this work rather than how it is built, so they are not part of the public repository.
+# They stay on disk; only the tracked copy is omitted.
+PLAN.md
+docs/interview-notes.md

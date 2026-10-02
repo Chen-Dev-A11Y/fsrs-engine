@@ -1,0 +1,87 @@
+server:
+  port: 8080
+  # No context-path on purpose: every endpoint already carries the /api prefix,
+  # so proxies and the frontend dev server never need to know about a base path.
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: fsrs-server
+
+  datasource:
+    # createDatabaseIfNotExist lets a first run succeed against a bare MySQL instance.
+    # allowPublicKeyRetrieval + useSSL=false are what a local MySQL 8 without TLS needs.
+    url: jdbc:mysql://localhost:3306/fsrs?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&rewriteBatchedStatements=true
+    username: root
+    # Overridable so a deployment never has to carry a password in the repository.
+    # The default keeps a local one-command start working out of the box.
+    password: "${MYSQL_PASSWORD:123456}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      pool-name: fsrs-pool
+
+  sql:
+    init:
+      # always: schema.sql is written with IF NOT EXISTS, so repeated boots are safe.
+      mode: always
+      # migration.sql runs after schema.sql and carries every column added after the first
+      # release. It has to be a separate, idempotent script because CREATE TABLE IF NOT
+      # EXISTS never alters an existing table; see the header of that file.
+      schema-locations: classpath:db/schema.sql,classpath:db/migration.sql
+      data-locations: classpath:db/data.sql
+      continue-on-error: false
+      encoding: UTF-8
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 1
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+fsrs:
+  jwt:
+    # Dev default. Override with FSRS_JWT_SECRET in any real deployment.
+    secret: ${FSRS_JWT_SECRET:fsrs-engine-dev-secret-change-me-in-production-2026}
+    ttl-seconds: 604800
+  redis:
+    # All Redis keys live under one prefix so the service can share a Redis instance.
+    key-prefix: "srs:"
+    session-ttl-seconds: 1800
+    idempotency-ttl-seconds: 86400
+    state-ttl-seconds: 3600
+    state-ttl-jitter-seconds: 300
+    ratelimit:
+      max-requests: 300
+      window-seconds: 60
+  scheduler:
+    # Rebuild the Redis due index from MySQL on boot and every 10 minutes.
+    rebuild-on-startup: true
+    rebuild-interval-ms: 600000
+    # Default daily allowance of new cards per user; overridable per request by `limit`.
+    daily-new-card-limit: 20
+  demo:
+    # Seeds ~30 cards for the demo user on first boot; users created later start empty.
+    seed-cards-on-startup: true
+
+logging:
+  level:
+    root: INFO
+    com.fsrs.server: INFO

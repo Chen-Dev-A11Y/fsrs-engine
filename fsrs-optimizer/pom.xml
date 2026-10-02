@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.fsrs</groupId>
+        <artifactId>fsrs-engine</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>fsrs-optimizer</artifactId>
+    <name>fsrs-optimizer</name>
+    <description>Fits the 21 FSRS-6 parameters from review history - the capability the official Java library lacks.</description>
+
+    <dependencies>
+        <!-- The memory model being fitted. Nothing else is needed at runtime. -->
+        <dependency>
+            <groupId>com.fsrs</groupId>
+            <artifactId>fsrs-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
